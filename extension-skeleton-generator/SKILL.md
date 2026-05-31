@@ -19,8 +19,9 @@ description: WebpackとTypeScriptを使用したChrome拡張機能のスケル�
 2. **ディレクトリ構成**
    - `src/`: TypeScript のソースコードを配置するディレクトリ。
    - `package/`: Chrome 拡張機能として読み込ませる（アンパックして読み込む）ルートディレクトリ。
-   - `package/manifest.json`: Manifest V3 形式で拡張機能の設定を記述する。
+   - `package/manifest.json`: Manifest V3 形式で拡張機能の設定を記述する。国際化（i18n）に対応させるため `"default_locale"` を指定する。
    - `package/js/`: Webpack によってビルドされた JavaScript ファイルの出力先ディレクトリ。
+   - `package/_locales/`: 多言語対応（日本語・英語）のリソースファイルを配置するディレクトリ。
 3. **ビルド設定 (`package.json`)**
    - `rimraf` で古いビルドファイル (`package/js` や `package.zip`) を削除し、Webpackでビルドを行い、最後に `zip` コマンドで `package.zip` を生成するフローを `"build"` スクリプトとして定義する。
      （例: `"build": "rimraf ./package/js && rimraf package.zip && npx webpack && (cd package && zip -r ../package.zip .)"`）
@@ -45,12 +46,23 @@ description: WebpackとTypeScriptを使用したChrome拡張機能のスケル�
 ### 4. `package/manifest.json`
 - Manifest V3 に準拠した最小限の雛形。
 - Webpackで出力される `js/xxx.js` (相対パス) を適宜バックグラウンドやコンテンツスクリプトとして読み込む設定にする。
+- 国際化（i18n）対応のため、`"default_locale": "en"` (または "ja") を記述し、拡張機能名や説明文に `__MSG_appName__` のような変数を指定する。
 
 ### 5. `src/` 内のソースコードおよび UI の雛形
 - 拡張機能の用途に合わせて以下の雛形を作成する。
   - `src/content.ts` (コンテンツスクリプト用)
   - `src/background.ts` (サービスワーカー用)
   - `src/popup.ts` と `package/popup.html` (ポップアップ用)
+
+### 6. `.gitignore`
+- バージョン管理から除外すべきファイルやディレクトリを指定する。
+- 少なくとも `node_modules/`、`package/js/`、`package.zip`、`.DS_Store` などを除外するよう記述する。
+
+### 7. 多言語対応ファイル (`_locales/`)
+- 日本語と英語に対応するための i18n メッセージファイルを生成する。
+- `package/_locales/en/messages.json` (英語版)
+- `package/_locales/ja/messages.json` (日本語版)
+- それぞれに `appName` や `appDesc` などの基本キーを含める。
 
 ## 🚀 実行ステップ
 
