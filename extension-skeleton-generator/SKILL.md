@@ -7,10 +7,10 @@ description: WebpackとTypeScriptを使用したChrome拡張機能のスケル�
 
 このスキルは、WebpackとTypeScriptをベースとしたモダンなChrome拡張機能の開発環境（スケルトンプロジェクト）を自動生成するためのものです。
 
-## 🎯 目的
+## 目的
 新規Chrome拡張機能の開発を迅速に開始できるように、必要な設定ファイルやディレクトリ構成、ボイラープレートコードを構築します。
 
-## 📋 必須要件
+## 必須要件
 プロジェクトを生成する際、以下の要件を必ず満たすようにファイルを構築してください。
 
 1. **技術スタック**
@@ -27,7 +27,7 @@ description: WebpackとTypeScriptを使用したChrome拡張機能のスケル�
      （例: `"build": "rimraf ./package/js && rimraf package.zip && npx webpack && (cd package && zip -r ../package.zip .)"`）
    - 開発用の watch モードスクリプト (`"dev": "webpack --mode development --watch"`) も含めること。
 
-## 📂 生成する標準ファイル
+## 生成する標準ファイル
 
 ユーザーの要望に応じて構成は調整しますが、原則として以下のファイルを生成してください。
 
@@ -64,7 +64,7 @@ description: WebpackとTypeScriptを使用したChrome拡張機能のスケル�
 - `package/_locales/ja/messages.json` (日本語版)
 - それぞれに `appName` や `appDesc` などの基本キーを含める。
 
-## 🚀 実行ステップ
+## 実行ステップ
 
 1. **要件の確認**: ユーザーがどのような拡張機能（Popupがあるか、Content Scriptsが必要かなど）を作りたいかをプロンプトから読み取る。不足している情報があれば質問する。
 2. **ファイルの生成**: ファイル作成ツールを用いて、必要な設定ファイルと雛形ソースコードを生成する。
