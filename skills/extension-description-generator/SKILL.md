@@ -15,22 +15,27 @@ description: ブラウザ拡張機能のChrome ウェブストア用の説明文
 - `manifest.json`: 拡張機能名、バージョン、権限、オムニボックスのキーワードを確認します。
 - `package.json`: プロジェクト名、説明、依存関係を確認します。
 - `src/` または `js/` ディレクトリ: 実際の挙動や機能を理解します。
+- **プロジェクトの仕様書（仕様駆動開発フレームワークを含む）**: プロジェクトの目的、ターゲットユーザー、主要機能や差別化ポイントを正確に把握するために確認します。
+  - **Spec Kit (`spec-kit`)**: `specs/*/spec.md`（機能要件・ユーザーストーリー）、`.specify/memory/constitution.md`（基本原則）など
+  - **Kiro / `cc-sdd`**: `.kiro/steering/product.md`（プロダクト概要・コアバリュー）、`.kiro/specs/*/requirements.md`・`design.md` など
+  - **OpenSpec**: `openspec/specs/` 配下の仕様書、`openspec/changes/` 配下の変更提案など
+  - **その他のフレームワーク / 一般的な仕様書**: 各フレームワーク固有の仕様ドキュメント、または `SPEC.md`、`docs/spec.md`、`docs/specs/` など
 - 既存の `store_description.md`: トーン、スタイル、既存のフォーマットを維持するために参照します。
 
 #### 1.1 既存の`store_description.md`が存在する場合
 既存の `store_description.md` が存在する場合は、下記の手順で更新内容を分析し、必要に応じて更新してください。
-1. `git log -1 store_description.md`　を実行して、store_description.mdが最後に更新されたコミットを特定します。
-2. `git log <最後の更新コミット>..HEAD` を実行して、store_description.mdの最後の更新以降のコミット履歴を取得します。
-3. コミット履歴を分析して、store_description.mdの内容と照らし合わせます。
-4. store_description.mdに記載されていない新しい機能や変更点があれば、それらをstore_description.mdに追加してください。
-5. 最後に、store_description.mdの変更内容をユーザーに説明してください。
+1. `git log -1 store_description.md` を実行して、`store_description.md` が最後に更新されたコミットを特定します。
+2. `git log <最後の更新コミット>..HEAD` を実行して、`store_description.md` の最後の更新以降のコミット履歴を取得します。
+3. コミット履歴および上記の仕様書（Spec Kit やその他仕様駆動開発フレームワークの仕様書、`SPEC.md`、`docs/spec.md` など）の更新内容を分析して、`store_description.md` の内容と照らし合わせます。
+4. `store_description.md` に記載されていない新しい機能や変更点があれば、それらを `store_description.md` に追加してください。
+5. 最後に、`store_description.md` の変更内容をユーザーに説明してください。
 
 #### 1.2 既存の`store_description.md`が存在しない場合
 ユーザーに新規作成するかどうか確認してください。新規作成する場合は、上記の情報を基に、英語と日本語の両方で説明文を生成してください。
 1. `manifest.json` と `package.json` から名前、バージョン、主要なキーワードを抽出します。
-2. プロジェクトの仕様(`docs/spec.md`など)が存在する場合は、内容を参照して説明文の内容を充実させてください。
+2. プロジェクト内に仕様書（Spec Kit の `specs/*/spec.md`、Kiro / `cc-sdd` の `.kiro/steering/product.md` や `.kiro/specs/*/requirements.md`、OpenSpec の `openspec/specs/`、または `SPEC.md` / `docs/spec.md` など）が存在する場合は、その内容を参照して説明文の内容を充実させてください。
 3. その他、ソースコードや既存のドキュメントから、拡張機能の機能を抽出して説明文に反映させてください。
-4. 生成した説明文をstore_description.mdに保存し、ユーザーに提示してください。必要に応じて修正の提案を行ってください。
+4. 生成した説明文を `store_description.md` に保存し、ユーザーに提示してください。必要に応じて修正の提案を行ってください。
 
 ### 2. コンテンツ構造
 説明文は、英語と日本語の両方で以下の標準的な構造に従う必要があります：

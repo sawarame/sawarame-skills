@@ -64,8 +64,25 @@ description: WebpackとTypeScriptを使用したChrome拡張機能のスケル�
 - `package/_locales/ja/messages.json` (日本語版)
 - それぞれに `appName` や `appDesc` などの基本キーを含める。
 
+## 仕様駆動開発（SDD）フレームワーク利用時の対応
+
+プロジェクト内に **Spec Kit** やその他の**仕様駆動開発フレームワーク**のドキュメント、または既存の仕様書が既に存在する場合は、スケルトン生成前にそれらを参照して要件・設計を読み取ってください。
+
+- **Spec Kit (`spec-kit`)**: `.specify/memory/constitution.md`、`specs/*/spec.md`、`specs/*/plan.md`、`specs/*/data-model.md` など
+- **Kiro / `cc-sdd`**: `.kiro/steering/`（`product.md`, `tech.md`, `structure.md`）、`.kiro/specs/*/`（`requirements.md`, `design.md`）など
+- **OpenSpec**: `openspec/specs/`、`openspec/changes/` など
+- **その他のフレームワーク / 一般的な仕様書**: 各フレームワーク固有の仕様ドキュメント、または `SPEC.md`、`docs/spec.md` など
+
+### 仕様書参照時の反映ポイント
+- **メタデータ・多言語リソースへの反映**: 仕様書に記載された拡張機能名や概要を `package/manifest.json`、`package.json`、`package/_locales/`（日英メッセージ）に反映します。
+- **構成コンポーネントと権限の反映**: 仕様書・設計書で定義されている機能（Popup、Background Service Worker、Content Scripts、Options ページ、必要な `permissions` など）に合わせて、`webpack.config.js` のエントリーポイントや `src/` 内の雛形ファイルを過不足なく構成します。
+- **技術・構成ルールの尊重**: `.specify/memory/constitution.md` や `.kiro/steering/tech.md`・`structure.md` などに技術スタックやディレクトリ構成の制約がある場合は、本スキルの標準構成をベースにしつつプロジェクト規約に適合させます。
+- **既存資産の保護**: `.gitignore` などを生成・更新する際は、既存の `.specify/`、`.kiro/`、`openspec/`、`specs/` などの仕様管理ディレクトリや設定を損なわないように配慮します。
+
 ## 実行ステップ
 
-1. **要件の確認**: ユーザーがどのような拡張機能（Popupがあるか、Content Scriptsが必要かなど）を作りたいかをプロンプトから読み取る。不足している情報があれば質問する。
+1. **仕様書・要件の確認**:
+   - まずワークスペース内に上記の仕様駆動開発フレームワーク（Spec Kit、Kiro / `cc-sdd`、OpenSpec など）や仕様書が存在するか確認し、記載されている要件を読み取ります。
+   - 仕様書が存在しない場合、または仕様書だけでは判断できない項目（Popup の有無、Content Scripts の要否など）がある場合は、プロンプトから読み取るかユーザーに質問します（既に仕様書に明記されている事項を重複して質問しないでください）。
 2. **ファイルの生成**: ファイル作成ツールを用いて、必要な設定ファイルと雛形ソースコードを生成する。
 3. **セットアップの提案**: ファイル生成後、`npm install` と `npm run build` を実行して初期セットアップを行うようユーザーに促す（または許可を得てコマンドを実行する）。
