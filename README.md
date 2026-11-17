@@ -6,13 +6,14 @@ AIコーディングエージェント（Antigravity / Gemini）向けの開発�
 
 ## 概要（収録スキル一覧）
 
-本プラグインには以下の 5 つのスキルが含まれています。
+本プラグインには以下の 6 つのスキルが含まれています。
 
 | スキル名 | 概要 |
 | :--- | :--- |
 | **`branch-name-generator`** | 作業目的や仕様駆動開発フレームワークの規約から Git ブランチ名を生成し、ブランチを作成します。 |
 | **`commit-message-generator`** | ステージ済みの変更差分と関連仕様から Conventional Commits 形式の日本語コミットメッセージを生成します。 |
 | **`spec-generator`** | プロジェクトのコミット履歴を分析し、各フレームワークやプロジェクト構成に適した仕様書を生成・差分更新します。 |
+| **`issue-implementer`** | GitHub Issue 番号を基に Issue を確認し、Spec Kit（`speckit-specify` → `speckit-plan` → `speckit-task`）で仕様・計画・タスクを作成して実装・PR 作成までを行います（不明点は Issue にコメント追加）。 |
 | **`extension-skeleton-generator`** | Webpack + TypeScript（Manifest V3・日英 i18n 対応）による Chrome 拡張機能の雛形を仕様書に基づき生成します。 |
 | **`extension-description-generator`** | Chrome ウェブストア公開用の説明文（英語・日本語）を `store_description.md` に生成・更新します。 |
 
@@ -76,6 +77,13 @@ git clone git@github.com:sawarame/sawarame-skills.git
   - 「コミット履歴からプロジェクトの仕様書を作成して」
   - 「最新のコミット内容を仕様書に反映して」
 
+### `issue-implementer`（GitHub Issue 駆動の仕様化・実装・PR 作成）
+指定された GitHub Issue 番号の内容（本文・ラベル・既存コメント）を取得し、Spec Kit のフロー（`speckit-specify` → `speckit-plan` → `speckit-task`）に沿って仕様書・実装計画・実装タスクを順次作成します。タスクに基づく実装後、プロジェクトのユニットテストやビルドチェック等をすべてパスさせたうえで、ブランチへのコミット／プッシュおよび PR 作成までを自動で行います。各フェーズで実装上決めなければならないことや不明点が見つかった場合は、論点・選択肢・推奨案を整理して対象 Issue に直接コメントを追加します。
+
+- **プロンプト例:**
+  - 「Issue #42 を確認して Spec Kit で仕様書・計画・タスクを作って実装し、PR まで作成して」
+  - 「#15 の Issue を進めて。不明点があれば Issue にコメントして」
+
 ### `extension-skeleton-generator`（Chrome 拡張機能スケルトン生成）
 Webpack と TypeScript をベースとした Chrome 拡張機能（Manifest V3）の初期プロジェクトを構築します。事前に Spec Kit などの仕様駆動開発フレームワークや `SPEC.md` 等で仕様が作成されている場合は、その要件・設計を読み取って `src/` 配下の TypeScript 雛形、`package/manifest.json`、日英の多言語ファイル（`_locales/`）、およびビルドから ZIP パッケージ作成まで行う `package.json` スクリプトを一括生成します。
 
@@ -106,6 +114,8 @@ sawarame-skills/
     ├── extension-description-generator/
     │   └── SKILL.md
     ├── extension-skeleton-generator/
+    │   └── SKILL.md
+    ├── issue-implementer/
     │   └── SKILL.md
     └── spec-generator/
         └── SKILL.md
