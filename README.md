@@ -1,17 +1,18 @@
 # sawarame-skills
 
 AIコーディングエージェント（Antigravity / Gemini）向けの開発支援スキルをまとめたプラグインです。  
-日常的な Git ワークフロー（ブランチ作成・コミットメッセージ生成）、コミット履歴からの仕様書生成、および Chrome 拡張機能開発（プロジェクト雛形構築・ストア説明文作成）を効率化します。  
+日常的な Git ワークフロー（ブランチ作成・コミットメッセージ生成・PR 作成）、コミット履歴からの仕様書生成、および Chrome 拡張機能開発（プロジェクト雛形構築・ストア説明文作成）を効率化します。  
 また、**Spec Kit (`spec-kit`)** や **Kiro / `cc-sdd`**、**OpenSpec** などの仕様駆動開発（SDD: Spec-Driven Development）フレームワークを導入しているプロジェクトにも対応しており、各フレームワークの仕様書・規約を参照して動作します。
 
 ## 概要（収録スキル一覧）
 
-本プラグインには以下の 6 つのスキルが含まれています。
+本プラグインには以下の 7 つのスキルが含まれています。
 
 | スキル名 | 概要 |
 | :--- | :--- |
 | **`branch-name-generator`** | 作業目的や仕様駆動開発フレームワークの規約から Git ブランチ名を生成し、ブランチを作成します。 |
 | **`commit-message-generator`** | ステージ済みの変更差分と関連仕様から Conventional Commits 形式の日本語コミットメッセージを生成します。 |
+| **`pr-creator`** | 現在のブランチの変更を読み取り、必要に応じたコミット・プッシュと分岐元ブランチをベースとした通常 PR の作成を自動で行います。 |
 | **`spec-generator`** | プロジェクトのコミット履歴を分析し、各フレームワークやプロジェクト構成に適した仕様書を生成・差分更新します。 |
 | **`issue-implementer`** | GitHub Issue 番号を基に Issue を確認し、Spec Kit（`speckit-specify` → `speckit-plan` → `speckit-task`）で仕様・計画・タスクを作成して実装・PR 作成までを行います（不明点は Issue にコメント追加）。 |
 | **`extension-skeleton-generator`** | Webpack + TypeScript（Manifest V3・日英 i18n 対応）による Chrome 拡張機能の雛形を仕様書に基づき生成します。 |
@@ -70,6 +71,13 @@ git clone git@github.com:sawarame/sawarame-skills.git
   - 「ステージした変更からコミットメッセージを作成して」
   - 「今の変更をコミットして」
 
+### `pr-creator`（プルリクエスト自動作成）
+現在の作業ブランチの変更内容を読み取り、確認を挟まずに通常 PR を作成します。`main` / `master` ブランチ上では中断し、未コミットの変更がある場合は `commit-message-generator` スキルに従ってコミットを作成します。ブランチやコミットが未プッシュであれば自動でプッシュを行い、そのブランチの分岐元をベースブランチとして指定したうえで、プロジェクトのルール（または基本日本語）に沿ったタイトル・本文で PR を作成します。
+
+- **プロンプト例:**
+  - 「現在のブランチの変更からプルリクを作成して」
+  - 「このブランチをまとめて PR を出して」
+
 ### `spec-generator`（仕様書生成・更新）
 プロジェクトの `git log` を分析し、仕様書をマークダウン形式で生成・更新します。Spec Kit（`specs/*/spec.md`）、Kiro / `cc-sdd`（`.kiro/specs/*/requirements.md`）、OpenSpec（`openspec/specs/`）などの仕様駆動開発フレームワークが使用されている場合はその構成・フォーマットに従い、未導入の場合は `SPEC.md` や `docs/spec.md` などを対象とします。既に仕様書が存在する場合は、最終更新コミット以降の履歴から変更点を抽出し、差分アップデートを提案します。
 
@@ -116,6 +124,8 @@ sawarame-skills/
     ├── extension-skeleton-generator/
     │   └── SKILL.md
     ├── issue-implementer/
+    │   └── SKILL.md
+    ├── pr-creator/
     │   └── SKILL.md
     └── spec-generator/
         └── SKILL.md
