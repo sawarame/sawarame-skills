@@ -14,7 +14,7 @@ AIコーディングエージェント（Antigravity / Gemini）向けの開発�
 | **`commit-message-generator`** | ステージ済みの変更差分と関連仕様から Conventional Commits 形式の日本語コミットメッセージを生成します。 |
 | **`pr-creator`** | 現在のブランチの変更を読み取り、必要に応じたコミット・プッシュと分岐元ブランチをベースとした通常 PR の作成を自動で行います。 |
 | **`spec-generator`** | プロジェクトのコミット履歴を分析し、各フレームワークやプロジェクト構成に適した仕様書を生成・差分更新します。 |
-| **`issue-implementer`** | GitHub Issue 番号を基に Issue を確認し、Spec Kit（`speckit-specify` → `speckit-plan` → `speckit-task`）で仕様・計画・タスクを作成して実装・PR 作成までを行います（不明点は Issue にコメント追加）。 |
+| **`issue-implementer`** | GitHub Issue 番号を基に Issue を確認し、`git worktree` で隔離環境を作って Spec Kit（`speckit-specify` → `speckit-plan` → `speckit-task`）で仕様・計画・タスクを作成し、実装・PR 作成後に元のブランチへ戻します（不明点は Issue にコメント追加）。 |
 | **`extension-skeleton-generator`** | Webpack + TypeScript（Manifest V3・日英 i18n 対応）による Chrome 拡張機能の雛形を仕様書に基づき生成します。 |
 | **`extension-description-generator`** | Chrome ウェブストア公開用の説明文（英語・日本語）を `store_description.md` に生成・更新します。 |
 
@@ -86,7 +86,7 @@ git clone git@github.com:sawarame/sawarame-skills.git
   - 「最新のコミット内容を仕様書に反映して」
 
 ### `issue-implementer`（GitHub Issue 駆動の仕様化・実装・PR 作成）
-指定された GitHub Issue 番号の内容（本文・ラベル・既存コメント）を取得し、ユーザーの回答待ちを挟まずに自律（放置）で動作します。実装内容が明瞭な場合は、Spec Kit のフロー（`speckit-specify` → `speckit-plan` → `speckit-task`）に沿って仕様書・実装計画・実装タスクを順次作成し、タスクに基づく実装とプロジェクトのユニットテスト・ビルドチェック等をすべてパスさせたうえで、ブランチへのコミット／プッシュおよび PR 作成までを自動で行います。実装上決めなければならないことや不明点がある場合は、推測で進めず論点・選択肢・推奨案を整理して対象 Issue に直接コメントを登録して終了します。
+指定された GitHub Issue 番号の内容（本文・ラベル・既存コメント）を取得し、ユーザーの回答待ちを挟まずに自律（放置）で動作します。実装内容が明瞭な場合は、他の作業に影響を与えないよう `git worktree` で隔離された作業環境を作成し、Spec Kit のフロー（`speckit-specify` → `speckit-plan` → `speckit-task`）に沿って仕様書・実装計画・実装タスクを順次作成し、タスクに基づく実装とプロジェクトのユニットテスト・ビルドチェック等をすべてパスさせたうえで、ブランチへのコミット／プッシュおよび PR 作成までを自動で行います。PR 作成後は作業用 worktree をクリーンアップし、必ず開始時の元のブランチへ戻します。実装上決めなければならないことや不明点がある場合は、推測で進めず論点・選択肢・推奨案を整理して対象 Issue に直接コメントを登録して終了します。
 
 - **プロンプト例:**
   - 「Issue #42 を確認して Spec Kit で仕様書・計画・タスクを作って実装し、PR まで作成して」
