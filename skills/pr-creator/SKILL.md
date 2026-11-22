@@ -57,6 +57,7 @@ PR のターゲットとなるベースブランチには、**現在のブラン
    - コミット一覧の確認: `git log <ベースブランチ>..HEAD --oneline`（必要に応じて詳細メッセージも確認）
    - 変更差分の確認: `git diff <ベースブランチ>..HEAD --stat` および `git diff <ベースブランチ>..HEAD`
    - 必要に応じてプロジェクト内の関連ドキュメント（Spec Kit の `specs/*/spec.md`、`plan.md`、`tasks.md`、Kiro の `.kiro/specs/*/`、OpenSpec の `openspec/` 等）も参照し、変更の背景や目的を正確に把握します。
+   - ブランチ名・コミットメッセージ・ユーザー指示から関連する GitHub Issue や先行 PR が特定できる場合、または差分だけでは仕様・受け入れ条件が十分に把握できない場合は、必要に応じて `gh issue view` / `gh issue list` / `gh pr view`（または GitHub MCP ツール）で内容・コメントを読み取り、PR 本文の概要や関連 Issue リンク（例: `Closes #123` / `Refs #123`）に適切に反映します（取得できない環境ではローカル情報のみで続行してください）。
 2. **プロジェクト固有ルールの確認**:
    - リポジトリ内に PR テンプレート（`.github/pull_request_template.md`、`.github/PULL_REQUEST_TEMPLATE.md`、`.github/PULL_REQUEST_TEMPLATE/*.md` 等）や、コントリビューション規約・プロジェクトルール（`CONTRIBUTING.md`、`AGENTS.md`、`CLAUDE.md`、`.specify/memory/constitution.md` 等）が存在する場合は、そのフォーマット・記載項目・言語規約・タイトル規約に必ず従ってください。
 3. **デフォルトの生成ルール（プロジェクト固有の言語・フォーマット指定がない場合）**:

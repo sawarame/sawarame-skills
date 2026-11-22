@@ -31,26 +31,27 @@ description: ブラウザ拡張機能のChrome ウェブストア用の説明文
   - **Kiro / `cc-sdd`**: `.kiro/steering/product.md`（プロダクト概要・コアバリュー）、`.kiro/specs/*/requirements.md`・`design.md` など
   - **OpenSpec**: `openspec/specs/` 配下の仕様書、`openspec/changes/` 配下の変更提案など
   - **その他のフレームワーク / 一般的な仕様書**: 各フレームワーク固有の仕様ドキュメント、または `SPEC.md`、`docs/spec.md`、`docs/specs/` など
+- **GitHub Issue / PR（必要に応じて）**: ローカルの仕様書やコミット差分だけでは機能の詳細・背景・ユーザーメリットが十分に把握できない場合や、コミット履歴・ユーザー指示に関連する Issue / PR がある場合は、`gh issue view` / `gh issue list` / `gh pr view` / `gh pr list`（または GitHub MCP ツール）で内容やコメントを読み取ります（取得できない環境ではローカル情報のみで続行してください）。
 - 既存の `store_description.<lang>.md`（および旧形式の単一ファイル `store_description.md`）: トーン、スタイル、既存のフォーマットを維持するために参照します。
 
 #### 1.1 既存の言語別ファイル（`store_description.<lang>.md`）が存在する場合
 既存の言語別ファイルが存在する場合は、下記の手順で更新内容を分析し、必要に応じて更新してください。
 1. 対象となる各 `store_description.<lang>.md` について `git log -1 <ファイル名>` を実行し、最後に更新されたコミットを特定します。
 2. `git log <最後の更新コミット>..HEAD` を実行して、最後の更新以降のコミット履歴を取得します。
-3. コミット履歴および上記の仕様書（Spec Kit やその他仕様駆動開発フレームワークの仕様書、`SPEC.md`、`docs/spec.md` など）の更新内容を分析して、各言語ファイルの内容と照らし合わせます。
+3. コミット履歴、上記の仕様書（Spec Kit やその他仕様駆動開発フレームワークの仕様書、`SPEC.md`、`docs/spec.md` など）、および必要に応じて関連する GitHub Issue / PR の内容を分析して、各言語ファイルの内容と照らし合わせます。
 4. 記載されていない新しい機能や変更点があれば、各言語ファイルに追加・反映してください。また、対象言語のうち未作成のファイルがある場合は、既存の他言語ファイルと一貫性を保ちつつ新規作成してください（特定言語のみ指定された場合を除く）。
 5. 最後に、各ファイルの変更内容をユーザーに説明してください。
 
 #### 1.2 旧形式の単一ファイル（`store_description.md`）のみが存在する場合
 既存のプロジェクトに旧形式の単一ファイル `store_description.md` のみが存在する場合は、以下の手順で言語別ファイルへ移行してください。
 1. `git log -1 store_description.md` と `git log <最後の更新コミット>..HEAD` を実行して、`store_description.md` の最終更新以降のコミット履歴を取得します。
-2. 既存の `store_description.md` に含まれている内容（トーン、構成、記載済みの機能）をベースとし、コミット履歴や仕様書の最新内容も反映したうえで、全5言語のファイル（`store_description.en.md`, `store_description.ja.md`, `store_description.zh-CN.md`, `store_description.zh-TW.md`, `store_description.ko.md`）を新規作成します。
+2. 既存の `store_description.md` に含まれている内容（トーン、構成、記載済みの機能）をベースとし、コミット履歴・仕様書および必要に応じて関連する GitHub Issue / PR の最新内容も反映したうえで、全5言語のファイル（`store_description.en.md`, `store_description.ja.md`, `store_description.zh-CN.md`, `store_description.zh-TW.md`, `store_description.ko.md`）を新規作成します。
 3. 作成した各ファイルの内容と反映した変更点をユーザーに説明し、旧ファイル `store_description.md` を削除してよいかユーザーに確認してください（ユーザーの承認なく自動削除しないでください）。
 
 #### 1.3 既存の説明文ファイルが存在しない場合
 ユーザーに新規作成するかどうか確認してください。新規作成する場合は、上記の情報を基に、各言語（デフォルトは英語・日本語・中国語（簡体字/繁体字）・韓国語の5言語）で説明文を生成してください。
 1. `manifest.json` と `package.json` から名前、バージョン、主要なキーワードを抽出します。
-2. プロジェクト内に仕様書（Spec Kit の `specs/*/spec.md`、Kiro / `cc-sdd` の `.kiro/steering/product.md` や `.kiro/specs/*/requirements.md`、OpenSpec の `openspec/specs/`、または `SPEC.md` / `docs/spec.md` など）が存在する場合は、その内容を参照して説明文の内容を充実させてください。
+2. プロジェクト内に仕様書（Spec Kit の `specs/*/spec.md`、Kiro / `cc-sdd` の `.kiro/steering/product.md` や `.kiro/specs/*/requirements.md`、OpenSpec の `openspec/specs/`、または `SPEC.md` / `docs/spec.md` など）が存在する場合は、その内容を参照して説明文の内容を充実させてください。また、仕様や機能要件が GitHub Issue / PR に記載されている場合は、必要に応じてそれらも読み取って反映してください。
 3. その他、ソースコードや既存のドキュメントから、拡張機能の機能を抽出して説明文に反映させてください。
 4. 生成した説明文を言語ごとのファイル（`store_description.<lang>.md`）に保存し、ユーザーに提示してください。必要に応じて修正の提案を行ってください。
 
