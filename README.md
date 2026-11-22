@@ -14,8 +14,6 @@ AIコーディングエージェント（Antigravity / Gemini）向けの開発�
 | **`commit-message-generator`** | ステージ済みの変更差分と関連仕様から Conventional Commits 形式の日本語コミットメッセージを生成します。 |
 | **`pr-creator`** | 現在のブランチの変更を読み取り、必要に応じたコミット・プッシュと分岐元ブランチをベースとした通常 PR の作成を自動で行います。 |
 | **`spec-generator`** | プロジェクトのコミット履歴を分析し、各フレームワークやプロジェクト構成に適した仕様書を生成・差分更新します。 |
-| **`issue-implementer`** | GitHub Issue 番号を基に Issue を確認し、実装前に仕様・技術要件を Issue コメントへ記録したうえで、`git worktree` 上で実装・検証・PR 作成後に元のブランチへ戻します（不明点は Issue にコメント登録して終了）。 |
-| **`extension-skeleton-generator`** | Webpack + TypeScript（Manifest V3・日英 i18n 対応）による Chrome 拡張機能の雛形を仕様書に基づき生成します。 |
 | **`extension-description-generator`** | Chrome ウェブストア公開用の説明文（英語・日本語）を `store_description.md` に生成・更新します。 |
 
 ---
@@ -85,20 +83,6 @@ git clone git@github.com:sawarame/sawarame-skills.git
   - 「コミット履歴からプロジェクトの仕様書を作成して」
   - 「最新のコミット内容を仕様書に反映して」
 
-### `issue-implementer`（GitHub Issue 駆動の仕様記録・実装・PR 作成）
-指定された GitHub Issue 番号の内容（本文・ラベル・既存コメント）を取得し、ユーザーの回答待ちを挟まずに自律（放置）で動作します。実装内容が明瞭な場合は、実装に着手する前に仕様および技術要件を整理して対象 Issue にコメントとして残し、他の作業に影響を与えないよう `git worktree` で隔離された作業環境を作成して実装とプロジェクトのユニットテスト・ビルドチェック等をすべてパスさせたうえで、ブランチへのコミット／プッシュおよび PR 作成までを自動で行います。PR 作成後は作業用 worktree をクリーンアップし、必ず開始時の元のブランチへ戻します。実装上決めなければならないことや不明点がある場合は、推測で進めず論点・選択肢・推奨案を整理して対象 Issue に直接コメントを登録して終了します。
-
-- **GitHub App（Bot）としての実行（オプション）:**
-  `~/.config/github-app/.env` を配置しておくことで、Issue コメント投稿や PR 作成を個人アカウントではなく専用 GitHub App（`<app-name>[bot]`）名義で実行できます（未配置の場合は従来通りローカルでログイン中の `gh` ユーザーで実行されます）。詳しい手順は [`skills/issue-implementer/README.md`](./skills/issue-implementer/README.md) を参照してください。
-  ```dotenv
-  # ~/.config/github-app/.env
-  GITHUB_APP_ID=123456
-  GITHUB_APP_PRIVATE_KEY_PATH=~/.config/github-app/your-app.private-key.pem
-  ```
-- **プロンプト例:**
-  - 「Issue #42 を確認して仕様・技術要件をコメントした上で実装し、PR まで作成して」
-  - 「#15 の Issue を進めて。不明点があれば Issue にコメントして」
-
 ### `extension-skeleton-generator`（Chrome 拡張機能スケルトン生成）
 Webpack と TypeScript をベースとした Chrome 拡張機能（Manifest V3）の初期プロジェクトを構築します。事前に Spec Kit などの仕様駆動開発フレームワークや `SPEC.md` 等で仕様が作成されている場合は、その要件・設計を読み取って `src/` 配下の TypeScript 雛形、`package/manifest.json`、日英の多言語ファイル（`_locales/`）、およびビルドから ZIP パッケージ作成まで行う `package.json` スクリプトを一括生成します。
 
@@ -130,11 +114,6 @@ sawarame-skills/
     │   └── SKILL.md
     ├── extension-skeleton-generator/
     │   └── SKILL.md
-    ├── issue-implementer/
-    │   ├── README.md
-    │   ├── SKILL.md
-    │   └── scripts/
-    │       └── gh-as-bot.mjs
     ├── pr-creator/
     │   └── SKILL.md
     └── spec-generator/
