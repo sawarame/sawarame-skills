@@ -14,7 +14,7 @@ AIコーディングエージェント（Antigravity / Gemini）向けの開発�
 | **`commit-message-generator`** | ステージ済みの変更差分と関連仕様から Conventional Commits 形式の日本語コミットメッセージを生成します。 |
 | **`pr-creator`** | 現在のブランチの変更を読み取り、必要に応じたコミット・プッシュと分岐元ブランチをベースとした通常 PR の作成を自動で行います。 |
 | **`spec-generator`** | プロジェクトのコミット履歴を分析し、各フレームワークやプロジェクト構成に適した仕様書を生成・差分更新します。 |
-| **`extension-description-generator`** | Chrome ウェブストア公開用の説明文（英語・日本語・中国語（簡体字/繁体字）・韓国語）を言語別ファイル（`store_description.<lang>.md`）として生成・更新します。 |
+| **`extension-description-generator`** | Chrome ウェブストア公開用の説明文（英語・日本語・中国語（簡体字/繁体字）・韓国語）を言語別ファイル（`store_description.<lang>.md`）として生成・更新し、審査提出用の権限使用理由も `store_permissions_justification.md` にまとめます。 |
 
 ---
 
@@ -90,12 +90,13 @@ Webpack と TypeScript をベースとした Chrome 拡張機能（Manifest V3�
   - 「ポップアップとバックグラウンドスクリプトを持つ Chrome 拡張機能の雛形を作って」
   - 「既存の仕様書に基づいて新しい Chrome 拡張プロジェクトのスケルトンを作成して」
 
-### `extension-description-generator`（Chrome ウェブストア説明文生成）
-`manifest.json`、`package.json`、ソースコード、各仕様駆動開発フレームワークの仕様書（または `SPEC.md` / `docs/spec.md` 等）、および必要に応じて関連する GitHub Issue / PR の内容を分析し、Chrome ウェブストアの入稿仕様（本文の Markdown 非対応、文字数制限、客観的な表現など）に準拠した説明文を、英語・日本語・中国語（簡体字・繁体字）・韓国語の言語別ファイル（`store_description.en.md` / `store_description.ja.md` / `store_description.zh-CN.md` / `store_description.zh-TW.md` / `store_description.ko.md`）として出力します。既存の言語別ファイルがある場合はコミット履歴や仕様書の更新から未反映の変更点のみを更新し、旧形式の単一ファイル `store_description.md` のみがある場合は内容を引き継いで各言語ファイルへ分割移行します。
+### `extension-description-generator`（Chrome ウェブストア説明文・権限使用理由生成）
+`manifest.json`、`package.json`、ソースコード、各仕様駆動開発フレームワークの仕様書（または `SPEC.md` / `docs/spec.md` 等）、および必要に応じて関連する GitHub Issue / PR の内容を分析し、Chrome ウェブストアの入稿仕様（本文の Markdown 非対応、文字数制限、客観的な表現など）に準拠した説明文を、英語・日本語・中国語（簡体字・繁体字）・韓国語の言語別ファイル（`store_description.en.md` / `store_description.ja.md` / `store_description.zh-CN.md` / `store_description.zh-TW.md` / `store_description.ko.md`）として出力します。また、`manifest.json` の権限宣言と実際の実装に基づき、ストア審査（プライバシー）提出用の権限使用理由・単一用途の説明・リモートコード使用有無を `store_permissions_justification.md`（英語［審査提出用］・日本語［確認用］併記）にまとめます。既存ファイルがある場合はコミット履歴や仕様書の更新から未反映の変更点のみを更新し、旧形式の単一ファイル `store_description.md` のみがある場合は内容を引き継いで各言語ファイルへ分割移行します。
 
 - **プロンプト例:**
-  - 「現在の manifest と仕様を基に、Chrome ウェブストア用の説明文を各言語で生成して」
+  - 「現在の manifest と仕様を基に、Chrome ウェブストア用の説明文と権限の使用理由を生成して」
   - 「新しく追加したショートカット機能を含めて各言語のストア説明文を更新して」
+  - 「拡張機能の機能に応じて権限の使用理由を `store_permissions_justification.md` にまとめて」
 
 ---
 

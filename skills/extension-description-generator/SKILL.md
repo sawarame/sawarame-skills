@@ -1,59 +1,62 @@
 ---
 name: extension-description-generator
-description: ブラウザ拡張機能のChrome ウェブストア用の説明文（英語・日本語・中国語（簡体字/繁体字）・韓国語）を言語別ファイル（`store_description.<lang>.md`）として生成・更新します。`manifest.json`や`package.json`、既存の機能を基に作成または更新します。
+description: ブラウザ拡張機能のChrome ウェブストア用の説明文（英語・日本語・中国語（簡体字/繁体字）・韓国語）を言語別ファイル（`store_description.<lang>.md`）として生成・更新し、さらに審査提出用の権限使用理由を `store_permissions_justification.md` としてまとめます。`manifest.json`や`package.json`、ソースコード、仕様書を基に作成または更新します。
 ---
 
-# Store Description Generator
+# Store Description & Permissions Justification Generator
 
 ## 概要
-このスキルは、高品質でプロフェッショナルな Chrome ウェブストア用説明文の自動生成を可能にします。英語・日本語・中国語（簡体字・繁体字）・韓国語の全5言語で一貫性を保ちながら、主要な機能、技術的な利点、およびユーザーのメリットを強調し、言語ごとのファイルとして出力します。
+このスキルは、高品質でプロフェッショナルな Chrome ウェブストア用説明文および審査提出用の権限使用理由（Permission Justification）の自動生成を可能にします。
+- **ストア説明文**: 英語・日本語・中国語（簡体字・繁体字）・韓国語の全5言語で一貫性を保ちながら、主要な機能、技術的な利点、およびユーザーのメリットを言語ごとのファイルとして出力します。
+- **権限の使用理由**: `manifest.json` の権限宣言と実際のソースコードの実装に基づき、Chrome ウェブストアのプライバシー審査に必要な権限使用理由を `store_permissions_justification.md`（英語［審査提出用］・日本語［確認用］併記）として出力します。
 
-### 対象言語と出力ファイル名
-デフォルトでは、以下の言語別ファイルをプロジェクトのルートディレクトリに生成・更新します（ユーザーが特定の言語のみを指定した場合は、指定された言語のファイルのみを対象とします）。
+### 出力ファイル一覧
+デフォルトでは、以下のファイルをプロジェクトのルートディレクトリに生成・更新します（ユーザーが「特定の言語のみ」「説明文のみ」「権限の使用理由のみ」を指定した場合は、指定されたファイルのみを対象とします）。
 
-| 言語 | 出力ファイル名 | Chrome ウェブストア ロケール目安 |
+| 用途 / 言語 | 出力ファイル名 | 備考 / Chrome ウェブストア ロケール目安 |
 | :--- | :--- | :--- |
-| 英語 | `store_description.en.md` | `en` / `en_US` |
-| 日本語 | `store_description.ja.md` | `ja` |
-| 中国語（簡体字） | `store_description.zh-CN.md` | `zh_CN` |
-| 中国語（繁体字） | `store_description.zh-TW.md` | `zh_TW` |
-| 韓国語 | `store_description.ko.md` | `ko` |
+| 説明文（英語） | `store_description.en.md` | `en` / `en_US` |
+| 説明文（日本語） | `store_description.ja.md` | `ja` |
+| 説明文（中国語・簡体字） | `store_description.zh-CN.md` | `zh_CN` |
+| 説明文（中国語・繁体字） | `store_description.zh-TW.md` | `zh_TW` |
+| 説明文（韓国語） | `store_description.ko.md` | `ko` |
+| 権限の使用理由 | `store_permissions_justification.md` | 審査提出用（英語＋確認用日本語を併記） |
 
 ## ガイドライン
 
 ### 1. 情報の収集
-説明文を生成する前に、必ず以下のファイルを分析してください：
-- `manifest.json`: 拡張機能名、バージョン、権限、オムニボックスのキーワードを確認します。
+説明文や権限の使用理由を生成する前に、必ず以下のファイルを分析してください：
+- `manifest.json`: 拡張機能名、バージョン、オムニボックスのキーワード、および権限関連フィールド（`permissions`、`optional_permissions`、`host_permissions`、`optional_host_permissions`、`content_scripts[].matches`、`externally_connectable`、`web_accessible_resources`、`content_security_policy` など）を確認します。
 - `package.json`: プロジェクト名、説明、依存関係を確認します。
-- `src/` または `js/` ディレクトリ: 実際の挙動や機能を理解します。
+- `src/` または `js/` ディレクトリ: 実際の挙動や機能、各権限に対応する Chrome API 呼び出し（例: `chrome.storage.*`, `chrome.tabs.*`, `chrome.scripting.*`, `chrome.contextMenus.*` 等）、外部通信やリモートコードの有無を確認します。
 - **プロジェクトの仕様書（仕様駆動開発フレームワークを含む）**: プロジェクトの目的、ターゲットユーザー、主要機能や差別化ポイントを正確に把握するために確認します。
   - **Spec Kit (`spec-kit`)**: `specs/*/spec.md`（機能要件・ユーザーストーリー）、`.specify/memory/constitution.md`（基本原則）など
   - **Kiro / `cc-sdd`**: `.kiro/steering/product.md`（プロダクト概要・コアバリュー）、`.kiro/specs/*/requirements.md`・`design.md` など
   - **OpenSpec**: `openspec/specs/` 配下の仕様書、`openspec/changes/` 配下の変更提案など
   - **その他のフレームワーク / 一般的な仕様書**: 各フレームワーク固有の仕様ドキュメント、または `SPEC.md`、`docs/spec.md`、`docs/specs/` など
 - **GitHub Issue / PR（必要に応じて）**: ローカルの仕様書やコミット差分だけでは機能の詳細・背景・ユーザーメリットが十分に把握できない場合や、コミット履歴・ユーザー指示に関連する Issue / PR がある場合は、`gh issue view` / `gh issue list` / `gh pr view` / `gh pr list`（または GitHub MCP ツール）で内容やコメントを読み取ります（取得できない環境ではローカル情報のみで続行してください）。
-- 既存の `store_description.<lang>.md`（および旧形式の単一ファイル `store_description.md`）: トーン、スタイル、既存のフォーマットを維持するために参照します。
+- 既存の `store_description.<lang>.md`（および旧形式の単一ファイル `store_description.md`）、`store_permissions_justification.md`: トーン、スタイル、既存のフォーマットや記載内容を維持するために参照します。
 
-#### 1.1 既存の言語別ファイル（`store_description.<lang>.md`）が存在する場合
-既存の言語別ファイルが存在する場合は、下記の手順で更新内容を分析し、必要に応じて更新してください。
-1. 対象となる各 `store_description.<lang>.md` について `git log -1 <ファイル名>` を実行し、最後に更新されたコミットを特定します。
+#### 1.1 既存の言語別ファイル（`store_description.<lang>.md`）または `store_permissions_justification.md` が存在する場合
+既存ファイルが存在する場合は、下記の手順で更新内容を分析し、必要に応じて更新してください。
+1. 対象となる各既存ファイルについて `git log -1 <ファイル名>` を実行し、最後に更新されたコミットを特定します。
 2. `git log <最後の更新コミット>..HEAD` を実行して、最後の更新以降のコミット履歴を取得します。
-3. コミット履歴、上記の仕様書（Spec Kit やその他仕様駆動開発フレームワークの仕様書、`SPEC.md`、`docs/spec.md` など）、および必要に応じて関連する GitHub Issue / PR の内容を分析して、各言語ファイルの内容と照らし合わせます。
-4. 記載されていない新しい機能や変更点があれば、各言語ファイルに追加・反映してください。また、対象言語のうち未作成のファイルがある場合は、既存の他言語ファイルと一貫性を保ちつつ新規作成してください（特定言語のみ指定された場合を除く）。
+3. コミット履歴、`manifest.json` やソースコードの差分、上記の仕様書、および必要に応じて関連する GitHub Issue / PR の内容を分析して、既存ファイルの内容と照らし合わせます。
+4. 未反映の新機能・変更点や権限の追加・削除・用途変更があれば、各対象ファイルを更新してください。また、対象ファイルのうち未作成のものがある場合は、他ファイルと一貫性を保ちつつ新規作成してください（一部のみ指定された場合を除く）。
 5. 最後に、各ファイルの変更内容をユーザーに説明してください。
 
 #### 1.2 旧形式の単一ファイル（`store_description.md`）のみが存在する場合
 既存のプロジェクトに旧形式の単一ファイル `store_description.md` のみが存在する場合は、以下の手順で言語別ファイルへ移行してください。
 1. `git log -1 store_description.md` と `git log <最後の更新コミット>..HEAD` を実行して、`store_description.md` の最終更新以降のコミット履歴を取得します。
-2. 既存の `store_description.md` に含まれている内容（トーン、構成、記載済みの機能）をベースとし、コミット履歴・仕様書および必要に応じて関連する GitHub Issue / PR の最新内容も反映したうえで、全5言語のファイル（`store_description.en.md`, `store_description.ja.md`, `store_description.zh-CN.md`, `store_description.zh-TW.md`, `store_description.ko.md`）を新規作成します。
+2. 既存の `store_description.md` に含まれている内容（トーン、構成、記載済みの機能）をベースとし、コミット履歴・仕様書および必要に応じて関連する GitHub Issue / PR の最新内容も反映したうえで、全5言語のファイル（`store_description.en.md`, `store_description.ja.md`, `store_description.zh-CN.md`, `store_description.zh-TW.md`, `store_description.ko.md`）を新規作成します（必要に応じて `store_permissions_justification.md` もあわせて作成・更新します）。
 3. 作成した各ファイルの内容と反映した変更点をユーザーに説明し、旧ファイル `store_description.md` を削除してよいかユーザーに確認してください（ユーザーの承認なく自動削除しないでください）。
 
-#### 1.3 既存の説明文ファイルが存在しない場合
-ユーザーに新規作成するかどうか確認してください。新規作成する場合は、上記の情報を基に、各言語（デフォルトは英語・日本語・中国語（簡体字/繁体字）・韓国語の5言語）で説明文を生成してください。
-1. `manifest.json` と `package.json` から名前、バージョン、主要なキーワードを抽出します。
-2. プロジェクト内に仕様書（Spec Kit の `specs/*/spec.md`、Kiro / `cc-sdd` の `.kiro/steering/product.md` や `.kiro/specs/*/requirements.md`、OpenSpec の `openspec/specs/`、または `SPEC.md` / `docs/spec.md` など）が存在する場合は、その内容を参照して説明文の内容を充実させてください。また、仕様や機能要件が GitHub Issue / PR に記載されている場合は、必要に応じてそれらも読み取って反映してください。
-3. その他、ソースコードや既存のドキュメントから、拡張機能の機能を抽出して説明文に反映させてください。
-4. 生成した説明文を言語ごとのファイル（`store_description.<lang>.md`）に保存し、ユーザーに提示してください。必要に応じて修正の提案を行ってください。
+#### 1.3 既存ファイルが存在しない場合
+ユーザーに新規作成するかどうか確認してください（ユーザーから明示的に作成指示がある場合はそのまま作成して構いません）。新規作成する場合は、上記の情報を基に対象ファイルを生成してください。
+1. `manifest.json` と `package.json` から名前、バージョン、主要なキーワード、および要求している権限一覧を抽出します。
+2. プロジェクト内に仕様書（Spec Kit の `specs/*/spec.md`、Kiro / `cc-sdd` の `.kiro/steering/product.md` や `.kiro/specs/*/requirements.md`、OpenSpec の `openspec/specs/`、または `SPEC.md` / `docs/spec.md` など）が存在する場合は、その内容を参照して説明文や用途説明の内容を充実させてください。また、仕様や機能要件が GitHub Issue / PR に記載されている場合は、必要に応じてそれらも読み取って反映してください。
+3. その他、ソースコードや既存のドキュメントから、拡張機能の機能および各権限の具体的な使用箇所を抽出して反映させてください。
+4. 生成した内容を `store_description.<lang>.md` および `store_permissions_justification.md` に保存し、ユーザーに提示してください。必要に応じて修正の提案を行ってください。
 
 ### 2. コンテンツ構造
 各言語ファイル（1ファイルにつき1言語のみ記述）は、以下の標準的な構造に従う必要があります：
@@ -95,25 +98,83 @@ Chrome ウェブストア等の審査で「キーワード スパム（Keyword S
 - **無関係・過剰なキーワードの禁止**: 検索流入やランキング操作を狙った無関係なキーワード、タグ・ハッシュタグ風の単語リスト、不要な同義語の羅列を含めないでください。
 - **同一キーワードの過度な反復禁止**: 特定の単語やフレーズを不自然な頻度で繰り返さず、人間が読んで自然な文章として簡潔に記述してください。
 
+### 5. 権限の使用理由（`store_permissions_justification.md`）
+Chrome ウェブストアの「プライバシー（Privacy）」審査タブに入力する権限の使用理由を、`store_permissions_justification.md` としてプロジェクトルートにまとめます。
+
+- **記述言語**: 審査フォームへそのまま転記しやすい **英語（審査提出用）** と、内容確認用の **日本語（確認用）** を 1 ファイル内に併記してください。
+- **本文の書式**: ストアの審査入力欄へコピー＆ペーストできるよう、各 `English` / `日本語` セクションの本文は Markdown 装飾を使わないプレーンテキストで記述してください。
+- **対象となる権限の網羅**:
+  - `manifest.json` に宣言されている `permissions`、`optional_permissions`、`host_permissions`、`optional_host_permissions`、および `content_scripts[].matches` によりホスト権限が発生する対象パターンを漏れなく洗い出してください。
+  - 追加権限を一切要求していない場合は、その旨を明記してください。
+  - **未使用権限の検出**: `manifest.json` に宣言されているものの、実際のソースコード上で使用されていない権限が見つかった場合は、最小権限の原則（Principle of Least Privilege）に基づき、ユーザーへ不要な権限の削除を提案・警告してください。
+- **記載すべき必須項目と記述品質**:
+  1. **単一用途の説明 (`Single Purpose Description`)**: 拡張機能の明確で単一の目的を 1〜2 文で簡潔に記述します。
+  2. **権限ごとの使用理由 (`Permission Justifications`)**:
+     - 各権限について、「どのユーザー向け機能のために」「具体的にどの処理・Chrome API で使用しているか」を実際のソースコードの事実に基づいて記述します。
+     - 「拡張機能の動作に必要（Needed for the extension to work）」のような抽象的な記述は審査で却下されるため厳禁です。
+     - 広範なホスト権限（例: `<all_urls>`、`https://*/*`）を使用している場合は、なぜ特定のドメイン限定や `activeTab` では実現できないのかも具体的に説明してください。
+     - データの外部送信を行わずローカルのみで完結する場合は、その事実も明記してください。
+  3. **リモートコードの使用有無 (`Remote Code Usage`)**: 外部ホストされたスクリプトや動的コード実行を使用していないこと（すべてのコードがパッケージ内に同梱されていること）を実装確認のうえ明記します（使用している場合はその理由を正確に記述）。
+- **出力フォーマット例**:
+  ```markdown
+  # Chrome Web Store Permissions Justification
+
+  ## Single Purpose Description
+
+  ### English
+  <拡張機能の単一用途を1〜2文で簡潔に記載>
+
+  ### 日本語
+  <確認用の日本語訳>
+
+  ## Permission Justifications
+
+  ### `storage`
+  #### English
+  <具体的な機能・用途・データ保存範囲をプレーンテキストで記載>
+
+  #### 日本語
+  <確認用の日本語訳>
+
+  ### Host permissions (`<対象パターン>`)
+  #### English
+  <具体的な機能・対象ページでの挙動・より狭い権限で代替できない理由を記載>
+
+  #### 日本語
+  <確認用の日本語訳>
+
+  ## Remote Code Usage
+
+  ### English
+  This extension does not use remotely hosted code. All executable code is bundled within the extension package.
+
+  ### 日本語
+  この拡張機能はリモートホストされたコードを使用しません。すべての実行可能コードは拡張機能パッケージ内に同梱されています。
+  ```
+
 ## ワークフロー
 
-1.  **メタデータの分析**: `manifest.json` と `package.json` から名前、バージョン、主要なキーワードを抽出します。
-2.  **機能の特定**: 拡張機能の主要なセールスポイントを3〜5個特定します。
-3.  **英語・日本語版のドラフト作成**: 上記の構造に従って `store_description.en.md` および `store_description.ja.md` の説明文を作成します。
+1.  **メタデータと権限の分析**: `manifest.json` と `package.json` から名前、バージョン、主要なキーワード、およびすべての要求権限（`permissions` / `optional_permissions` / `host_permissions` / `content_scripts[].matches` 等）を抽出します。
+2.  **機能と権限使用箇所の特定**: ソースコード・仕様書・必要に応じて関連する Issue / PR を分析し、拡張機能の主要なセールスポイント（3〜5個）と、各権限が実際に使用されている機能・API を特定します（未使用権限があれば記録します）。
+3.  **英語・日本語版のドラフト作成**: ストア説明文を生成対象とする場合、上記の構造に従って `store_description.en.md` および `store_description.ja.md` の説明文を作成します。
 4.  **中国語（簡体字/繁体字）・韓国語版のドラフト作成**: `store_description.zh-CN.md`、`store_description.zh-TW.md`、`store_description.ko.md` の説明文を作成します。単なる直訳ではなく、各言語圏のユーザー向けに適切な技術用語でローカライズされていること、および `Short Description` が各言語で最大132文字以内に収まっていることを確認してください。
-5.  **ポリシー・表現チェック**: すべての対応言語で、外部サービス名・ブランド名の列挙やキーワードの過度な反復（キーワードスパム / Yellow Argon）、および本文への Markdown 混入がないか確認します。
-6.  **レビューと保存・更新**: 既存の `store_description.<lang>.md` と比較し、必要に応じて部分的な更新または新規作成を行います。旧形式の `store_description.md` から移行した場合は、旧ファイルの削除可否をユーザーに確認します。
-7.  **変更内容の説明**: 作成・更新した各ファイルと変更内容をユーザーに説明してください。
+5.  **権限の使用理由の作成**: 権限使用理由を生成対象とする場合、セクション 5 の構成に従って `store_permissions_justification.md`（英語・日本語併記）を作成・更新します。
+6.  **ポリシー・表現チェック**:
+    - ストア説明文の全言語で、外部サービス名・ブランド名の列挙やキーワードの過度な反復（キーワードスパム / Yellow Argon）、および本文への Markdown 混入がないか確認します。
+    - `store_permissions_justification.md` で、すべての宣言権限が漏れなく具体的な機能根拠付きで説明されているか、コードと矛盾する記載がないか確認します。
+7.  **レビューと保存・更新**: 既存ファイルと比較し、必要に応じて部分的な更新または新規作成を行います。旧形式の `store_description.md` から移行した場合は、旧ファイルの削除可否をユーザーに確認します。
+8.  **変更内容の説明**: 作成・更新した各ファイルと変更内容をユーザーに説明し、未使用の権限が検出された場合は削除の提案も併せて報告してください。
 
 ## 注意事項
-- 各言語ファイル（`store_description.<lang>.md`）はプロジェクトのルートに作成してください。
-- 既存の言語別ファイルが存在する場合は、内容を完全に上書きするのではなく、必要な部分のみを更新してください。
+- 各言語の説明文ファイル（`store_description.<lang>.md`）および権限使用理由ファイル（`store_permissions_justification.md`）は、すべてプロジェクトのルートに作成してください。
+- 既存ファイルが存在する場合は、内容を完全に上書きするのではなく、必要な部分のみを更新してください。
 - 旧形式の単一ファイル `store_description.md` が存在する場合は、内容を引き継いで各言語別ファイルを作成したうえで、旧ファイルの削除可否を必ずユーザーに確認してください。
-- ユーザーが特定の言語のみを指定した場合は、指定された言語のファイルのみを作成・更新してください。
+- ユーザーが特定の言語のみ（例：「日本語版だけ更新して」）や権限の使用理由のみ（例：「権限の使用理由だけまとめて」）を指定した場合は、指定された対象ファイルのみを作成・更新してください。
 
 ## 例
 
 ### スキルの起動
-「新しく追加したキーボードショートカットを含めて各言語のストア説明文を更新して」
-「現在の manifest を基に、全言語（日・英・中・韓）のストア説明文を生成して」
+「新しく追加したキーボードショートカットを含めて各言語のストア説明文と権限の使用理由を更新して」
+「現在の manifest を基に、全言語（日・英・中・韓）のストア説明文と `store_permissions_justification.md` を生成して」
+「manifest.json の権限とソースコードを分析して、権限の使用理由を `store_permissions_justification.md` にまとめて」
 「既存の `store_description.md` を各言語ファイルに分割して、中国語と韓国語も追加して」
