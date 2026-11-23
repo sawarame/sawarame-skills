@@ -1,7 +1,7 @@
 # sawarame-skills
 
 AIコーディングエージェント（Antigravity / Gemini）向けの開発支援スキルをまとめたプラグインです。  
-日常的な Git ワークフロー（ブランチ作成・コミットメッセージ生成・PR 作成）、コミット履歴からの仕様書生成、および Chrome 拡張機能開発（プロジェクト雛形構築・ストア説明文作成）を効率化します。  
+日常的な Git ワークフロー（ブランチ作成・コミットメッセージ生成・PR 作成）、コミット履歴からの仕様書生成、および Chrome 拡張機能開発（プロジェクト雛形構築・ストア説明文作成・ストア画像生成）を効率化します。  
 また、**Spec Kit (`spec-kit`)** や **Kiro / `cc-sdd`**、**OpenSpec** などの仕様駆動開発（SDD: Spec-Driven Development）フレームワークを導入しているプロジェクトや、**GitHub Issue / PR** 上で仕様・要件を管理する開発フローにも対応しており、必要に応じて各仕様書・規約や Issue / PR の内容を参照して動作します。
 
 ## 概要（収録スキル一覧）
@@ -14,7 +14,9 @@ AIコーディングエージェント（Antigravity / Gemini）向けの開発�
 | **`commit-message-generator`** | ステージ済みの変更差分と関連仕様から Conventional Commits 形式の日本語コミットメッセージを生成します。 |
 | **`pr-creator`** | 現在のブランチの変更を読み取り、必要に応じたコミット・プッシュと分岐元ブランチをベースとした通常 PR の作成を自動で行います。 |
 | **`spec-generator`** | プロジェクトのコミット履歴を分析し、各フレームワークやプロジェクト構成に適した仕様書を生成・差分更新します。 |
+| **`extension-skeleton-generator`** | Webpack と TypeScript をベースとした Chrome 拡張機能（Manifest V3）の初期プロジェクト構成（`src/`、`package/`、`_locales/`、ビルド設定）を一括生成します。 |
 | **`extension-description-generator`** | プロジェクト内の `_locales` 構成から対応言語を自動判定（見つからない場合は英語・日本語）して Chrome ウェブストア公開用の説明文を言語別ファイル（`store_description.<lang>.md`）として生成・更新し、審査提出用の権限使用理由も `store_permissions_justification.md` にまとめます。 |
+| **`extension-image-generator`** | プロジェクト内の `_locales` 構成から対応言語を自動判定（見つからない場合は英語・日本語）し、HTML/CSS テンプレートと自動操作ブラウザ（Playwright 等）を用いた再利用可能な生成スクリプトを `scripts/` に保存・実行して、Chrome ウェブストア用の多言語スクリーンショット画像（`1280x800` または `640x400`、各言語最大 5 枚）を `images/` 直下に一括生成・更新します。 |
 
 ---
 
@@ -98,6 +100,14 @@ Webpack と TypeScript をベースとした Chrome 拡張機能（Manifest V3�
   - 「新しく追加したショートカット機能を含めて対応言語のストア説明文を更新して」
   - 「拡張機能の機能に応じて権限の使用理由を `store_permissions_justification.md` にまとめて」
 
+### `extension-image-generator`（Chrome ウェブストア多言語画像生成）
+`manifest.json`、`package.json`、`_locales/*/messages.json`、既存の `store_description.<lang>.md`、ソースコード・スタイル・アイコン画像、仕様書（Spec Kit / Kiro / OpenSpec / `SPEC.md` 等）、および必要に応じて関連する GitHub Issue / PR を分析し、Chrome ウェブストア用の多言語スクリーンショット画像を生成・更新します。対象言語は `extension-description-generator` と同様に `package/_locales/` を最優先として `_locales` 内の有効な言語フォルダ（`messages.json` を含むフォルダ、`_` を `-` に変換）から自動判定し、見つからない場合は英語・日本語にフォールバックします（ユーザー明示指定を最優先）。HTML/CSS テンプレートと自動操作ブラウザ（Playwright 等）を用いた再利用可能な Node.js 生成スクリプト（サイズ `1280x800` / `640x400` や対象言語の切り替えに対応）を `scripts/` に保存・差分更新し、各言語 1〜5 枚・透過なし 24-bit PNG の画像を `images/` 直下にフラット出力（`store-<NN>.<lang>.png`）したうえで、出力サイズ・透過有無・目視によるレイアウト崩れ検証まで一貫して実施します（対象外となった既存画像は自動削除せずユーザーへ削除可否を確認します）。
+
+- **プロンプト例:**
+  - 「現在の `_locales` 構成と `store_description` に合わせて、Chrome ウェブストア用の多言語スクリーンショット画像と生成スクリプトを作成して」
+  - 「新機能の UI を反映して、既存の画像生成スクリプトを更新し日本語と英語のストア画像を再生成して」
+  - 「`640x400` サイズで韓国語のストア用スクリーンショット画像を追加生成して」
+
 ---
 
 ## ディレクトリ構成
@@ -112,6 +122,8 @@ sawarame-skills/
     ├── commit-message-generator/
     │   └── SKILL.md
     ├── extension-description-generator/
+    │   └── SKILL.md
+    ├── extension-image-generator/
     │   └── SKILL.md
     ├── extension-skeleton-generator/
     │   └── SKILL.md
