@@ -16,7 +16,7 @@ AIコーディングエージェント（Antigravity / Gemini）向けの開発�
 | **`spec-generator`** | プロジェクトのコミット履歴を分析し、各フレームワークやプロジェクト構成に適した仕様書を生成・差分更新します。 |
 | **`extension-skeleton-generator`** | Webpack と TypeScript をベースとした Chrome 拡張機能（Manifest V3）の初期プロジェクト構成（`src/`、`package/`、`_locales/`、ビルド設定）を一括生成します。 |
 | **`extension-description-generator`** | プロジェクト内の `_locales` 構成から対応言語を自動判定（見つからない場合は英語・日本語）して Chrome ウェブストア公開用の説明文を言語別ファイル（`store_description.<lang>.md`）として生成・更新し、審査提出用の権限使用理由も `store_permissions_justification.md` にまとめます。 |
-| **`extension-image-generator`** | プロジェクト内の `_locales` 構成から対応言語を自動判定（見つからない場合は英語・日本語）し、HTML/CSS テンプレートと自動操作ブラウザ（Playwright 等）を用いた再利用可能な生成スクリプトを `scripts/` に保存・実行して、Chrome ウェブストアでの縮小表示に合わせたシンプルで文字が大きめの多言語スクリーンショット画像（`1280x800` または `640x400`、各言語最大 5 枚）を `images/` 直下に一括生成・更新します。 |
+| **`extension-image-generator`** | プロジェクト内の `_locales` 構成から対応言語を自動判定（見つからない場合は英語・日本語）し、HTML/CSS テンプレートと自動操作ブラウザ（Playwright 等）を用いた再利用可能な生成スクリプトを `scripts/` に保存・実行して、Chrome ウェブストアでの縮小表示に合わせたシンプルで文字が大きめの多言語スクリーンショット画像（`1280x800` または `640x400`、各言語最大 5 枚）と、言語共通・ビジュアル重視のプロモーションタイル画像（小: `440x280`、マーキー: `1400x560`）を `images/` 直下に一括生成・更新します。 |
 
 ---
 
@@ -100,12 +100,13 @@ Webpack と TypeScript をベースとした Chrome 拡張機能（Manifest V3�
   - 「新しく追加したショートカット機能を含めて対応言語のストア説明文を更新して」
   - 「拡張機能の機能に応じて権限の使用理由を `store_permissions_justification.md` にまとめて」
 
-### `extension-image-generator`（Chrome ウェブストア多言語画像生成）
-`manifest.json`、`package.json`、`_locales/*/messages.json`、既存の `store_description.<lang>.md`、ソースコード・スタイル・アイコン画像、仕様書（Spec Kit / Kiro / OpenSpec / `SPEC.md` 等）、および必要に応じて関連する GitHub Issue / PR を分析し、Chrome ウェブストアでの縮小表示でも見やすいシンプルかつ大きめの文字設計で多言語スクリーンショット画像を生成・更新します。対象言語は `extension-description-generator` と同様に `package/_locales/` を最優先として `_locales` 内の有効な言語フォルダ（`messages.json` を含むフォルダ、`_` を `-` に変換）から自動判定し、見つからない場合は英語・日本語にフォールバックします（ユーザー明示指定を最優先）。HTML/CSS テンプレートと自動操作ブラウザ（Playwright 等）を用いた再利用可能な Node.js 生成スクリプト（サイズ `1280x800` / `640x400` や対象言語の切り替えに対応）を `scripts/` に保存・差分更新し、各言語 1〜5 枚（1 スライド 1 メッセージ・基本レイアウト型に基づく高視認性デザイン）・透過なし 24-bit PNG の画像を `images/` 直下にフラット出力（`store-<NN>.<lang>.png`）したうえで、出力サイズ・透過有無・縮小表示を想定した目視検証まで一貫して実施します（対象外となった既存画像は自動削除せずユーザーへ削除可否を確認します）。
+### `extension-image-generator`（Chrome ウェブストア用画像・プロモーションタイル生成）
+`manifest.json`、`package.json`、`_locales/*/messages.json`、既存の `store_description.<lang>.md`、ソースコード・スタイル・アイコン画像、仕様書（Spec Kit / Kiro / OpenSpec / `SPEC.md` 等）、および必要に応じて関連する GitHub Issue / PR を分析し、Chrome ウェブストア公開用の多言語スクリーンショット画像と言語共通プロモーションタイル画像を生成・更新します。スクリーンショットの対象言語は `extension-description-generator` と同様に `package/_locales/` を最優先として `_locales` 内の有効な言語フォルダ（`messages.json` を含むフォルダ、`_` を `-` に変換）から自動判定し、見つからない場合は英語・日本語にフォールバックします（ユーザー明示指定を最優先）。HTML/CSS テンプレートと自動操作ブラウザ（Playwright 等）を用いた再利用可能な Node.js 生成スクリプト（サイズ `1280x800` / `640x400`、対象言語、生成対象［全種／スクリーンショット／プロモーションタイル］の切り替えに対応）を `scripts/` に保存・差分更新し、各言語 1〜5 枚のスクリーンショット（`store-<NN>.<lang>.png`、縮小表示に合わせたシンプル＆大きめの文字設計）と、キャッチコピー等の文章を入れず（入れるとしても拡張機能名のみ）アイコン・UI イラスト・象徴的なグラフィックで言葉がなくても機能が直感的に伝わるプロモーションタイル（小: `promo-small.png`［`440x280`］、マーキー: `promo-marquee.png`［`1400x560`］）を、いずれも透過なし 24-bit PNG で `images/` 直下にフラット出力したうえで、出力サイズ・透過有無・目視検証まで一貫して実施します（対象外となった既存画像は自動削除せずユーザーへ削除可否を確認します）。
 
 - **プロンプト例:**
-  - 「現在の `_locales` 構成と `store_description` に合わせて、Chrome ウェブストア用の多言語スクリーンショット画像と生成スクリプトを作成して」
-  - 「新機能の UI を反映して、既存の画像生成スクリプトを更新し日本語と英語のストア画像を再生成して」
+  - 「現在の `_locales` 構成と `store_description` に合わせて、Chrome ウェブストア用の多言語スクリーンショット画像とプロモーションタイル（440x280・1400x560）を作成して」
+  - 「既存の画像生成スクリプトを拡張して、言語非依存のプロモーションタイル（小・マーキー）を追加生成して」
+  - 「新機能の UI を反映して、既存の画像生成スクリプトを更新し日本語と英語のストア画像とプロモーションタイルを再生成して」
   - 「`640x400` サイズで韓国語のストア用スクリーンショット画像を追加生成して」
 
 ---
